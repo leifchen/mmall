@@ -9,10 +9,10 @@ import com.mmall.pojo.User;
 import com.mmall.service.UserService;
 import com.mmall.util.Md5Utils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -78,6 +78,8 @@ public class UserServiceImpl implements UserService {
                 if (resultCount > 0) {
                     return JsonResult.error("email已存在");
                 }
+            } else {
+                return JsonResult.error("参数不合法");
             }
         } else {
             return JsonResult.error(ResponseCodeEnum.ILLEGAL_ARGUMENT.getDesc());
@@ -158,7 +160,12 @@ public class UserServiceImpl implements UserService {
             return JsonResult.error("email已存在，请更换email再尝试更新");
         }
         User updateUser = new User();
-        BeanUtils.copyProperties(user, updateUser);
+        updateUser.setId(user.getId());
+        updateUser.setEmail(user.getEmail());
+        updateUser.setPhone(user.getPhone());
+        updateUser.setQuestion(user.getQuestion());
+        updateUser.setAnswer(user.getAnswer());
+        updateUser.setUpdateTime(new Date());
         int updateCount = userMapper.updateByPrimaryKeySelective(updateUser);
         if (updateCount > 0) {
             return JsonResult.success("更新个人信息成功", updateUser);

@@ -15,12 +15,12 @@ public class Const {
 
     public interface Role {
         /**
-         * 普通用户
-         */
-        int ROLE_CUSTOMER = 0;
-        /**
          * 管理员
          */
-        int ROLE_ADMIN = 1;
+        int ROLE_ADMIN = 0;
+        /**
+         * 普通用户
+         */
+        int ROLE_CUSTOMER = 1;
     }
 }

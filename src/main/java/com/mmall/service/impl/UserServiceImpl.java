@@ -172,4 +172,14 @@ public class UserServiceImpl implements UserService {
         }
         return JsonResult.error("更新个人信息失败");
     }
+
+    // backend
+
+    @Override
+    public JsonResult checkAdminRole(User user) {
+        if (user != null && user.getRole() == Const.Role.ROLE_ADMIN) {
+            return JsonResult.success();
+        }
+        return JsonResult.error();
+    }
 }

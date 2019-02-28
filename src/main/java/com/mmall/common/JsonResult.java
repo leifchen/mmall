@@ -79,7 +79,7 @@ public class JsonResult<T> implements Serializable {
         return new JsonResult<>(ResponseCodeEnum.ERROR.getCode(), errorMessage);
     }
 
-    public static <T> JsonResult<T> success(int errorCode, String errorMessage) {
+    public static <T> JsonResult<T> error(int errorCode, String errorMessage) {
         return new JsonResult<>(errorCode, errorMessage);
     }
 }

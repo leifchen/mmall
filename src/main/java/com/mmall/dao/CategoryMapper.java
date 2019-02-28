@@ -2,6 +2,8 @@ package com.mmall.dao;
 
 import com.mmall.pojo.Category;
 
+import java.util.List;
+
 /**
  * 商品类别Mapper
  * <p>
@@ -50,4 +52,11 @@ public interface CategoryMapper {
      * @return
      */
     int updateByPrimaryKey(Category record);
+
+    /**
+     * 根据父节点id查询类别
+     * @param parentId
+     * @return
+     */
+    List<Category> selectCategoryChildrenByParentId(Integer parentId);
 }

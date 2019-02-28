@@ -74,4 +74,11 @@ public interface UserService {
      * @return
      */
     JsonResult<User> updateInformation(User user);
+
+    /**
+     * 校验是否管理员角色
+     * @param user
+     * @return
+     */
+    JsonResult checkAdminRole(User user);
 }

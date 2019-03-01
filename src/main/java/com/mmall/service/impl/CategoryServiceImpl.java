@@ -75,7 +75,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public JsonResult selectCategoryAndChildrenById(Integer categoryId) {
+    public JsonResult<List<Integer>> selectCategoryAndChildrenById(Integer categoryId) {
         Set<Category> categorySet = Sets.newHashSet();
         findChildCategory(categorySet, categoryId);
 

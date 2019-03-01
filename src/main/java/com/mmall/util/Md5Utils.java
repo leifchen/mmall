@@ -15,7 +15,7 @@ public class Md5Utils {
     public static String encode(String str) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            str += PropertiesUtil.getProperty("password.salt", "");
+            str += PropertiesUtils.getProperty("password.salt", "");
             return Hex.encodeHexString(md.digest(str.getBytes())).toUpperCase();
         } catch (Exception e) {
             throw new RuntimeException(e);

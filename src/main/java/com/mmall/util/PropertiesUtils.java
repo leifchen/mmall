@@ -15,9 +15,9 @@ import java.util.Properties;
  * @Author LeifChen
  * @Date 2019-02-27
  */
-public class PropertiesUtil {
+public class PropertiesUtils {
 
-    private static Logger logger = LoggerFactory.getLogger(PropertiesUtil.class);
+    private static Logger logger = LoggerFactory.getLogger(PropertiesUtils.class);
 
     private static Properties props;
 
@@ -25,7 +25,7 @@ public class PropertiesUtil {
         String fileName = "mmall.properties";
         props = new Properties();
         try {
-            props.load(new InputStreamReader(PropertiesUtil.class.getClassLoader().getResourceAsStream(fileName), StandardCharsets.UTF_8));
+            props.load(new InputStreamReader(PropertiesUtils.class.getClassLoader().getResourceAsStream(fileName), StandardCharsets.UTF_8));
         } catch (IOException e) {
             logger.error("配置文件读取异常", e);
         }

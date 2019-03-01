@@ -41,5 +41,5 @@ public interface CategoryService {
      * @param categoryId
      * @return
      */
-    JsonResult selectCategoryAndChildrenById(Integer categoryId);
+    JsonResult<List<Integer>> selectCategoryAndChildrenById(Integer categoryId);
 }

@@ -1,6 +1,9 @@
 package com.mmall.dao;
 
 import com.mmall.pojo.Product;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 商品Mapper
@@ -50,4 +53,26 @@ public interface ProductMapper {
      * @return
      */
     int updateByPrimaryKey(Product record);
+
+    /**
+     * 查询产品列表
+     * @return
+     */
+    List<Product> selectList();
+
+    /**
+     * 根据id和名称查询产品列表
+     * @param productName
+     * @param productId
+     * @return
+     */
+    List<Product> selectByNameAndProductId(@Param("productName") String productName, @Param("productId") Integer productId);
+
+    /**
+     * 根据类别id和名称查询产品列表
+     * @param productName
+     * @param categoryIdList
+     * @return
+     */
+    List<Product> selectByNameAndCategoryIds(@Param("productName") String productName, @Param("categoryIdList") List<Integer> categoryIdList);
 }

@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 /**
- * 后台管理-产品Controller
+ * 后台管理-商品Controller
  * <p>
  * @Author LeifChen
  * @Date 2019-02-28

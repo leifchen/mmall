@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 产品Controller
+ * 商品Controller
  * <p>
  * @Author LeifChen
  * @Date 2019-03-01

@@ -55,13 +55,13 @@ public interface ProductMapper {
     int updateByPrimaryKey(Product record);
 
     /**
-     * 查询产品列表
+     * 查询商品列表
      * @return
      */
     List<Product> selectList();
 
     /**
-     * 根据id和名称查询产品列表
+     * 根据id和名称查询商品列表
      * @param productName
      * @param productId
      * @return
@@ -69,7 +69,7 @@ public interface ProductMapper {
     List<Product> selectByNameAndProductId(@Param("productName") String productName, @Param("productId") Integer productId);
 
     /**
-     * 根据类别id和名称查询产品列表
+     * 根据类别id和名称查询商品列表
      * @param productName
      * @param categoryIdList
      * @return

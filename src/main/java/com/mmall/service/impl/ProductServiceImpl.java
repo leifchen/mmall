@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * 产品Service的实现类
+ * 商品Service的实现类
  * <p>
  * @Author LeifChen
  * @Date 2019-02-28
@@ -51,18 +51,18 @@ public class ProductServiceImpl implements ProductService {
             if (product.getId() != null) {
                 int rowCount = productMapper.updateByPrimaryKey(product);
                 if (rowCount > 0) {
-                    return JsonResult.success("更新产品成功");
+                    return JsonResult.success("更新商品成功");
                 }
-                return JsonResult.success("更新产品失败");
+                return JsonResult.success("更新商品失败");
             } else {
                 int rowCount = productMapper.insert(product);
                 if (rowCount > 0) {
-                    return JsonResult.success("新增产品成功");
+                    return JsonResult.success("新增商品成功");
                 }
-                return JsonResult.success("新增产品失败");
+                return JsonResult.success("新增商品失败");
             }
         }
-        return JsonResult.error("新增或更新产品参数不正确");
+        return JsonResult.error("新增或更新商品参数不正确");
     }
 
     @Override
@@ -75,9 +75,9 @@ public class ProductServiceImpl implements ProductService {
         product.setStatus(status);
         int rowCount = productMapper.updateByPrimaryKeySelective(product);
         if (rowCount > 0) {
-            return JsonResult.success("修改产品销售状态成功");
+            return JsonResult.success("修改商品销售状态成功");
         }
-        return JsonResult.error("修改产品销售状态失败");
+        return JsonResult.error("修改商品销售状态失败");
     }
 
     @Override
@@ -87,14 +87,14 @@ public class ProductServiceImpl implements ProductService {
         }
         Product product = productMapper.selectByPrimaryKey(productId);
         if (product == null) {
-            return JsonResult.error("产品已下架或者删除");
+            return JsonResult.error("商品已下架或者删除");
         }
         ProductDetailVO productDetailVO = assembleProductDetailVO(product);
         return JsonResult.success(productDetailVO);
     }
 
     /**
-     * 填充产品详情
+     * 填充商品详情
      * @param product
      * @return
      */
@@ -152,11 +152,11 @@ public class ProductServiceImpl implements ProductService {
         }
         Product product = productMapper.selectByPrimaryKey(productId);
         if (product == null) {
-            return JsonResult.error("产品已下架或者删除");
+            return JsonResult.error("商品已下架或者删除");
         }
 
         if (product.getStatus() != Const.ProductStatusEnum.ON_SALE.getCode()) {
-            return JsonResult.error("产品已下架或者删除");
+            return JsonResult.error("商品已下架或者删除");
         }
         ProductDetailVO productDetailVO = assembleProductDetailVO(product);
         return JsonResult.success(productDetailVO);
@@ -200,8 +200,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     * 组装产品列表的分页信息
-     * @param productList 产品列表
+     * 组装商品列表的分页信息
+     * @param productList 商品列表
      * @return
      */
     private PageInfo assemblePageInfo(List<Product> productList) {
@@ -214,8 +214,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     * 组装产品的VO视图数据
-     * @param product 产品
+     * 组装商品的VO视图数据
+     * @param product 商品
      * @return
      */
     private ProductListVO assembleProductListVO(Product product) {

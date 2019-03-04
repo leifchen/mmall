@@ -3,7 +3,7 @@ package com.mmall.vo;
 import java.math.BigDecimal;
 
 /**
- * 产品VO
+ * 商品VO
  * <p>
  * @Author LeifChen
  * @Date 2019-02-28

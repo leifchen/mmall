@@ -68,4 +68,80 @@ public class Const {
             return value;
         }
     }
+
+    public enum OrderStatusEnum {
+        /**
+         * 已取消
+         */
+        CANCELED(0, "已取消"),
+        /**
+         * 未支付
+         */
+        NO_PAY(10, "未支付"),
+        /**
+         * 已付款
+         */
+        PAID(20, "已付款"),
+        /**
+         * 已发货
+         */
+        SHIPPED(40, "已发货");
+
+        private int code;
+        private String value;
+
+        OrderStatusEnum(int code, String value) {
+            this.code = code;
+            this.value = value;
+        }
+
+        public static OrderStatusEnum codeOf(int code) {
+            for (OrderStatusEnum orderStatusEnum : values()) {
+                if (orderStatusEnum.getCode() == code) {
+                    return orderStatusEnum;
+                }
+            }
+            throw new RuntimeException("没有找到对应的枚举");
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
+    public enum PaymentTypeEnum {
+        /**
+         * 在线支付
+         */
+        ONLINE_PAY(1, "在线支付");
+
+        private int code;
+        private String value;
+
+        PaymentTypeEnum(int code, String value) {
+            this.code = code;
+            this.value = value;
+        }
+
+        public static PaymentTypeEnum codeOf(int code) {
+            for (PaymentTypeEnum paymentTypeEnum : values()) {
+                if (paymentTypeEnum.getCode() == code) {
+                    return paymentTypeEnum;
+                }
+            }
+            throw new RuntimeException("没有找到对应的枚举");
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
 }

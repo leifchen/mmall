@@ -12,10 +12,10 @@ public enum ResponseCodeEnum {
     SUCCESS(0, "SUCCESS"),
     // 失败
     ERROR(1, "ERROR"),
-    // 需要登录
-    NEED_LOGIN(10, "NEED_LOGIN"),
     // 参数不合法
-    ILLEGAL_ARGUMENT(2, "ILLEGAL_ARGUMENT");
+    ILLEGAL_ARGUMENT(2, "ILLEGAL_ARGUMENT"),
+    // 需要登录
+    NEED_LOGIN(10, "NEED_LOGIN");
 
     private final int code;
     private final String desc;

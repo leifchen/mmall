@@ -99,4 +99,11 @@ public interface CartMapper {
      * @return
      */
     int selectCartProductCount(Integer userId);
+
+    /**
+     * 根据用户id查询购物车
+     * @param userId 用户id
+     * @return
+     */
+    List<Cart> selectCheckedCartByUserId(Integer userId);
 }

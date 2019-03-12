@@ -137,7 +137,8 @@ public class OrderServiceImpl implements OrderService {
         PageHelper.startPage(pageNum, pageSize);
         List<Order> orderList = orderMapper.selectByUserId(userId);
         List<OrderVO> orderVOList = assembleOrderVOList(orderList, userId);
-        PageInfo pageInfo = new PageInfo(orderVOList);
+        PageInfo pageInfo = new PageInfo(orderList);
+        pageInfo.setList(orderVOList);
         return JsonResult.success(pageInfo);
     }
 
@@ -146,7 +147,8 @@ public class OrderServiceImpl implements OrderService {
         PageHelper.startPage(pageNum, pageSize);
         List<Order> orderList = orderMapper.selectAll();
         List<OrderVO> orderVOList = assembleOrderVOList(orderList, null);
-        PageInfo pageInfo = new PageInfo(orderVOList);
+        PageInfo pageInfo = new PageInfo(orderList);
+        pageInfo.setList(orderVOList);
         return JsonResult.success(pageInfo);
     }
 
@@ -168,7 +170,8 @@ public class OrderServiceImpl implements OrderService {
         if (order != null) {
             List<OrderItem> orderItemList = orderItemMapper.getByOrderNo(orderNo);
             OrderVO orderVO = assembleOrderVO(order, orderItemList);
-            PageInfo pageInfo = new PageInfo(Lists.newArrayList(orderVO));
+            PageInfo pageInfo = new PageInfo(Lists.newArrayList(order));
+            pageInfo.setList(Lists.newArrayList(orderVO));
             return JsonResult.success(pageInfo);
         }
         return JsonResult.error("订单不存在");

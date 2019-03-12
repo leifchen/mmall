@@ -174,8 +174,8 @@ public class ProductServiceImpl implements ProductService {
             if (category == null && StringUtils.isBlank(keyword)) {
                 // 没有该分类,并且还没有关键字,这个时候返回一个空的结果集,不报错
                 PageHelper.startPage(pageNum, pageSize);
-                List<ProductListVO> productListVO = Lists.newArrayList();
-                PageInfo pageInfo = new PageInfo(productListVO);
+                List<ProductListVO> productListVOList = Lists.newArrayList();
+                PageInfo pageInfo = new PageInfo(productListVOList);
                 return JsonResult.success(pageInfo);
             }
             if (category != null) {
@@ -210,7 +210,9 @@ public class ProductServiceImpl implements ProductService {
             ProductListVO productListVO = assembleProductListVO(productItem);
             productListVOList.add(productListVO);
         }
-        return new PageInfo(productListVOList);
+        PageInfo pageInfo = new PageInfo(productList);
+        pageInfo.setList(productListVOList);
+        return pageInfo;
     }
 
     /**

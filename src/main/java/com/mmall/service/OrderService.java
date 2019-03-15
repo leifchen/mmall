@@ -4,6 +4,8 @@ import com.github.pagehelper.PageInfo;
 import com.mmall.common.JsonResult;
 import com.mmall.vo.OrderVO;
 
+import java.util.Map;
+
 /**
  * 订单Service
  * <p>
@@ -82,4 +84,28 @@ public interface OrderService {
      * @return
      */
     JsonResult<String> manageSendGoods(Long orderNo);
+
+    /**
+     * 付款
+     * @param orderNo 订单号
+     * @param userId  用户id
+     * @param path    二维码路径
+     * @return
+     */
+    JsonResult pay(Long orderNo, Integer userId, String path);
+
+    /**
+     * 支付宝回调
+     * @param params
+     * @return
+     */
+    JsonResult alipayCallback(Map<String, String> params);
+
+    /**
+     * 查询订单支付状态
+     * @param userId  用户id
+     * @param orderNo 订单号
+     * @return
+     */
+    JsonResult queryOrderPayStatus(Integer userId, Long orderNo);
 }

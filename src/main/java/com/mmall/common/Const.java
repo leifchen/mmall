@@ -46,6 +46,14 @@ public class Const {
         String LIMIT_NUM_SUCCESS = "LIMIT_NUM_SUCCESS";
     }
 
+    public interface AlipayCallback {
+        String TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY";
+        String TRADE_STATUS_TRADE_SUCCESS = "TRADE_SUCCESS";
+
+        String RESPONSE_SUCCESS = "success";
+        String RESPONSE_FAILED = "failed";
+    }
+
     public enum ProductStatusEnum {
         /**
          * 销售在线状态
@@ -134,6 +142,29 @@ public class Const {
                 }
             }
             throw new RuntimeException("没有找到对应的枚举");
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
+    public enum PayPlatformEnum {
+        /**
+         * 支付宝
+         */
+        ALIPAY(1, "支付宝");
+
+        private int code;
+        private String value;
+
+        PayPlatformEnum(int code, String value) {
+            this.code = code;
+            this.value = value;
         }
 
         public int getCode() {

@@ -11,7 +11,7 @@ import com.mmall.service.UserService;
 import com.mmall.util.CookieUtils;
 import com.mmall.util.JsonUtils;
 import com.mmall.util.PropertiesUtils;
-import com.mmall.util.RedisPoolUtils;
+import com.mmall.util.RedisShardedPoolUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -133,7 +133,7 @@ public class ProductManageController {
             resultMap.put("msg", "请登录管理员");
             return resultMap;
         }
-        String userJsonStr = RedisPoolUtils.get(loginToken);
+        String userJsonStr = RedisShardedPoolUtils.get(loginToken);
         User user = JsonUtils.string2Obj(userJsonStr, User.class);
         if (user == null) {
             resultMap.put("success", false);

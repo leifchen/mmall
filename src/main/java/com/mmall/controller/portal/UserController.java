@@ -7,7 +7,7 @@ import com.mmall.pojo.User;
 import com.mmall.service.UserService;
 import com.mmall.util.CookieUtils;
 import com.mmall.util.JsonUtils;
-import com.mmall.util.RedisPoolUtils;
+import com.mmall.util.RedisShardedPoolUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,7 +37,7 @@ public class UserController {
         JsonResult<User> response = userService.login(username, password);
         if (response.isSuccess()) {
             CookieUtils.writeLoginToken(httpServletResponse, session.getId());
-            RedisPoolUtils.setEx(session.getId(), JsonUtils.obj2String(response.getData()), Const.RedisCacheExtime.REDIS_SESSION_EXTIME);
+            RedisShardedPoolUtils.setEx(session.getId(), JsonUtils.obj2String(response.getData()), Const.RedisCacheExtime.REDIS_SESSION_EXTIME);
         }
         return response;
     }
@@ -46,7 +46,7 @@ public class UserController {
     public JsonResult<String> logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         String loginToken = CookieUtils.readLoginToken(httpServletRequest);
         CookieUtils.delLoginToken(httpServletRequest, httpServletResponse);
-        RedisPoolUtils.del(loginToken);
+        RedisShardedPoolUtils.del(loginToken);
         return JsonResult.success();
     }
 
@@ -108,7 +108,7 @@ public class UserController {
             if (result.isSuccess()) {
                 result.getData().setUsername(currentUser.getUsername());
                 String loginToken = CookieUtils.readLoginToken(httpServletRequest);
-                RedisPoolUtils.setEx(loginToken, JsonUtils.obj2String(response.getData()), Const.RedisCacheExtime.REDIS_SESSION_EXTIME);
+                RedisShardedPoolUtils.setEx(loginToken, JsonUtils.obj2String(response.getData()), Const.RedisCacheExtime.REDIS_SESSION_EXTIME);
             }
             return result;
         } else {

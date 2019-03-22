@@ -6,7 +6,7 @@ import com.mmall.pojo.User;
 import com.mmall.service.UserService;
 import com.mmall.util.CookieUtils;
 import com.mmall.util.JsonUtils;
-import com.mmall.util.RedisPoolUtils;
+import com.mmall.util.RedisShardedPoolUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ public class UserCheck {
         if (StringUtils.isEmpty(loginToken)) {
             return JsonResult.error("用户未登录");
         }
-        String userJsonStr = RedisPoolUtils.get(loginToken);
+        String userJsonStr = RedisShardedPoolUtils.get(loginToken);
         User user = JsonUtils.string2Obj(userJsonStr, User.class);
         if (user == null) {
             return JsonResult.error(ResponseCodeEnum.NEED_LOGIN.getCode(), ResponseCodeEnum.NEED_LOGIN.getDesc());
@@ -57,7 +57,7 @@ public class UserCheck {
         if (StringUtils.isEmpty(loginToken)) {
             return JsonResult.error("用户未登录");
         }
-        String userJsonStr = RedisPoolUtils.get(loginToken);
+        String userJsonStr = RedisShardedPoolUtils.get(loginToken);
         User user = JsonUtils.string2Obj(userJsonStr, User.class);
         if (user == null) {
             return JsonResult.error(ResponseCodeEnum.NEED_LOGIN.getCode(), ResponseCodeEnum.NEED_LOGIN.getDesc());

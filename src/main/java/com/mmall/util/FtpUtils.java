@@ -1,8 +1,7 @@
 package com.mmall.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,33 +14,30 @@ import java.util.List;
  * @Author LeifChen
  * @Date 2019-02-28
  */
+@Slf4j
 public class FtpUtils {
-
-    private static final Logger logger = LoggerFactory.getLogger(FtpUtils.class);
 
     private static String ftpIp = PropertiesUtils.getProperty("ftp.server.ip");
     private static String ftpUser = PropertiesUtils.getProperty("ftp.user");
     private static String ftpPassword = PropertiesUtils.getProperty("ftp.password");
 
     private String ip;
-    private int port;
     private String user;
     private String pwd;
     private FTPClient ftpClient;
 
-    public FtpUtils(String ip, int port, String user, String pwd) {
+    private FtpUtils(String ip, String user, String pwd) {
         this.ip = ip;
-        this.port = port;
         this.user = user;
         this.pwd = pwd;
     }
 
-    public static boolean uploadFile(List<File> fileList) throws IOException {
-        FtpUtils ftpUtils = new FtpUtils(ftpIp, 21, ftpUser, ftpPassword);
-        logger.info("开始连接ftp服务器");
-        boolean result = ftpUtils.uploadFile("img", fileList);
-        logger.info("开始连接ftp服务器,结束上传,上传结果:{}");
-        return result;
+    public static void uploadFile(List<File> fileList) throws IOException {
+        FtpUtils ftpUtils = new FtpUtils(ftpIp, ftpUser, ftpPassword);
+        log.info("开始连接ftp服务器");
+        String remotePath = "img";
+        ftpUtils.uploadFile(remotePath, fileList);
+        log.info("开始连接ftp服务器,结束上传,上传结果:{}");
     }
 
     /**
@@ -51,8 +47,7 @@ public class FtpUtils {
      * @return
      * @throws IOException
      */
-    private boolean uploadFile(String remotePath, List<File> fileList) throws IOException {
-        boolean uploaded = true;
+    private void uploadFile(String remotePath, List<File> fileList) throws IOException {
         // 连接FTP服务器
         if (connectServer(ip, user, pwd)) {
             try {
@@ -66,13 +61,11 @@ public class FtpUtils {
                     ftpClient.storeFile(fileItem.getName(), fis);
                 }
             } catch (IOException e) {
-                logger.error("上传文件异常", e);
-                uploaded = false;
+                log.error("上传文件异常", e);
             } finally {
                 ftpClient.disconnect();
             }
         }
-        return uploaded;
     }
 
     /**
@@ -89,48 +82,8 @@ public class FtpUtils {
             ftpClient.connect(ip);
             isSuccess = ftpClient.login(user, pwd);
         } catch (IOException e) {
-            logger.error("连接FTP服务器异常", e);
+            log.error("连接FTP服务器异常", e);
         }
         return isSuccess;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getPwd() {
-        return pwd;
-    }
-
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
-    }
-
-    public FTPClient getFtpClient() {
-        return ftpClient;
-    }
-
-    public void setFtpClient(FTPClient ftpClient) {
-        this.ftpClient = ftpClient;
     }
 }

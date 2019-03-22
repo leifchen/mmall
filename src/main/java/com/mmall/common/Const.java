@@ -12,10 +12,17 @@ import java.util.Set;
  */
 public class Const {
 
-    public static final String CURRENT_USER = "currentUser";
+    public static final String TOKEN_PREFIX = "token_";
 
     public static final String USERNAME = "username";
     public static final String EMAIL = "email";
+
+    public interface RedisCacheExtime {
+        /**
+         * 30分钟
+         */
+        int REDIS_SESSION_EXTIME = 60 * 30;
+    }
 
     public interface Role {
         /**
@@ -47,7 +54,6 @@ public class Const {
     }
 
     public interface AlipayCallback {
-        String TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY";
         String TRADE_STATUS_TRADE_SUCCESS = "TRADE_SUCCESS";
 
         String RESPONSE_SUCCESS = "success";

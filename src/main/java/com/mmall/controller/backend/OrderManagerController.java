@@ -1,19 +1,14 @@
 package com.mmall.controller.backend;
 
-import com.github.pagehelper.PageInfo;
-import com.mmall.common.Const;
 import com.mmall.common.JsonResult;
-import com.mmall.common.ResponseCodeEnum;
-import com.mmall.pojo.User;
+import com.mmall.controller.common.UserCheck;
 import com.mmall.service.OrderService;
-import com.mmall.service.UserService;
-import com.mmall.vo.OrderVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 后台管理-订单Controller
@@ -26,65 +21,54 @@ import javax.servlet.http.HttpSession;
 public class OrderManagerController {
 
     @Autowired
-    private UserService userService;
-    @Autowired
     private OrderService orderService;
+    @Autowired
+    private UserCheck userCheck;
 
     @RequestMapping(value = "/list.do")
-    public JsonResult<PageInfo> list(HttpSession session,
+    public JsonResult list(HttpServletRequest httpServletRequest,
                                      @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                      @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return JsonResult.error(ResponseCodeEnum.NEED_LOGIN.getCode(), "用户未登录，请登录管理员");
-        }
-        if (userService.checkAdminRole(user).isSuccess()) {
+        JsonResult response = userCheck.checkAdminRoleLogin(httpServletRequest);
+        if(response.isSuccess()){
             return orderService.manageList(pageNum, pageSize);
         } else {
-            return JsonResult.error("无权限操作");
+            return response;
         }
     }
 
     @RequestMapping(value = "/detail.do")
-    public JsonResult<OrderVO> detail(HttpSession session, Long orderNo) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return JsonResult.error(ResponseCodeEnum.NEED_LOGIN.getCode(), "用户未登录，请登录管理员");
-        }
-        if (userService.checkAdminRole(user).isSuccess()) {
+    public JsonResult detail(HttpServletRequest httpServletRequest, Long orderNo) {
+        JsonResult response = userCheck.checkAdminRoleLogin(httpServletRequest);
+        if(response.isSuccess()){
             return orderService.manageDetail(orderNo);
         } else {
-            return JsonResult.error("无权限操作");
+            return response;
         }
     }
 
     @RequestMapping(value = "/search.do")
-    public JsonResult<PageInfo> search(HttpSession session,
+    public JsonResult search(HttpServletRequest httpServletRequest,
                                        Long orderNo,
                                        @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return JsonResult.error(ResponseCodeEnum.NEED_LOGIN.getCode(), "用户未登录，请登录管理员");
-        }
-        if (userService.checkAdminRole(user).isSuccess()) {
+
+        JsonResult response = userCheck.checkAdminRoleLogin(httpServletRequest);
+        if(response.isSuccess()){
             return orderService.manageSearch(orderNo, pageNum, pageSize);
         } else {
-            return JsonResult.error("无权限操作");
+            return response;
         }
     }
 
     @RequestMapping(value = "/send_goods.do")
-    public JsonResult<String> sendGoods(HttpSession session, Long orderNo) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return JsonResult.error(ResponseCodeEnum.NEED_LOGIN.getCode(), "用户未登录，请登录管理员");
-        }
-        if (userService.checkAdminRole(user).isSuccess()) {
+    public JsonResult sendGoods(HttpServletRequest httpServletRequest, Long orderNo) {
+        JsonResult response = userCheck.checkAdminRoleLogin(httpServletRequest);
+        if(response.isSuccess()){
             return orderService.manageSendGoods(orderNo);
         } else {
-            return JsonResult.error("无权限操作");
+            return response;
         }
     }
 }

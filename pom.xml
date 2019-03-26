@@ -16,7 +16,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 
-        <org.springframework.version>4.0.0.RELEASE</org.springframework.version>
+        <org.springframework.version>4.0.3.RELEASE</org.springframework.version>
         <org.mybatis.version>3.4.1</org.mybatis.version>
         <org.mybatis.spring.version>1.3.0</org.mybatis.spring.version>
 
@@ -243,6 +243,13 @@
             <artifactId>lombok</artifactId>
             <version>1.18.6</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Spring Session 单点登录 -->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-redis</artifactId>
+            <version>1.2.0.RELEASE</version>
         </dependency>
     </dependencies>
 

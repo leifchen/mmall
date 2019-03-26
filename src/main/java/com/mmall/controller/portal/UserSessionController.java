@@ -26,6 +26,8 @@ public class UserSessionController {
 
     @RequestMapping(value = "/login.do", method = RequestMethod.GET)
     public JsonResult<User> login(String username, String password, HttpSession session) {
+        int i = 1 / 0;
+
         JsonResult<User> response = userService.login(username, password);
         if (response.isSuccess()) {
             session.setAttribute(Const.CURRENT_USER, response.getData());

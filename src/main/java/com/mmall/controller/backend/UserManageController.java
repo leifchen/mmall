@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSession;
  */
 @RestController
 @RequestMapping("/admin/user")
-public class UserManagerController {
+public class UserManageController {
 
     @Autowired
     private UserService userService;

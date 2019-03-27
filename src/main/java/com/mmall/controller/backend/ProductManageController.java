@@ -2,16 +2,10 @@ package com.mmall.controller.backend;
 
 import com.google.common.collect.Maps;
 import com.mmall.common.JsonResult;
-import com.mmall.controller.common.UserCheck;
 import com.mmall.pojo.Product;
-import com.mmall.pojo.User;
 import com.mmall.service.FileService;
 import com.mmall.service.ProductService;
-import com.mmall.service.UserService;
-import com.mmall.util.CookieUtils;
-import com.mmall.util.JsonUtils;
 import com.mmall.util.PropertiesUtils;
-import com.mmall.util.RedisShardedPoolUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,132 +28,75 @@ import java.util.Map;
 public class ProductManageController {
 
     @Autowired
-    private UserService userService;
-    @Autowired
     private ProductService productService;
     @Autowired
     private FileService fileService;
-    @Autowired
-    private UserCheck userCheck;
 
     @RequestMapping("/save.do")
-    public JsonResult productSave(HttpServletRequest httpServletRequest, Product product) {
-        JsonResult response = userCheck.checkAdminRoleLogin(httpServletRequest);
-        if(response.isSuccess()){
-            return productService.saveOrUpdateProduct(product);
-        } else {
-            return JsonResult.error("无权限操作");
-        }
+    public JsonResult productSave(Product product) {
+        return productService.saveOrUpdateProduct(product);
     }
 
     @RequestMapping("/set_sale_status.do")
-    public JsonResult setSaleStatus(HttpServletRequest httpServletRequest, Integer productId, Integer status) {
-        JsonResult response = userCheck.checkAdminRoleLogin(httpServletRequest);
-        if(response.isSuccess()){
-            return productService.setSaleStatus(productId, status);
-        } else {
-            return JsonResult.error("无权限操作");
-        }
+    public JsonResult setSaleStatus(Integer productId, Integer status) {
+        return productService.setSaleStatus(productId, status);
     }
 
     @RequestMapping("/detail.do")
-    public JsonResult getDetail(HttpServletRequest httpServletRequest, Integer productId) {
-        JsonResult response = userCheck.checkAdminRoleLogin(httpServletRequest);
-        if(response.isSuccess()){
-            return productService.manageProductDetail(productId);
-        } else {
-            return JsonResult.error("无权限操作");
-        }
+    public JsonResult getDetail(Integer productId) {
+        return productService.manageProductDetail(productId);
     }
 
     @RequestMapping("/list.do")
-    public JsonResult getList(HttpServletRequest httpServletRequest,
-                              @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+    public JsonResult getList(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                               @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
-        JsonResult response = userCheck.checkAdminRoleLogin(httpServletRequest);
-        if(response.isSuccess()){
-            return productService.getProductList(pageNum, pageSize);
-        } else {
-            return JsonResult.error("无权限操作");
-        }
+        return productService.getProductList(pageNum, pageSize);
     }
 
     @RequestMapping("/search.do")
-    public JsonResult productSearch(HttpServletRequest httpServletRequest,
-                                    String productName,
+    public JsonResult productSearch(String productName,
                                     Integer productId,
                                     @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                     @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
-        JsonResult response = userCheck.checkAdminRoleLogin(httpServletRequest);
-        if(response.isSuccess()){
-            return productService.searchProduct(productName, productId, pageNum, pageSize);
-        } else {
-            return JsonResult.error("无权限操作");
-        }
+        return productService.searchProduct(productName, productId, pageNum, pageSize);
     }
 
     @RequestMapping("/upload.do")
-    public JsonResult upload(HttpServletRequest httpServletRequest,
-                             @RequestParam(value = "upload_file", required = false) MultipartFile file,
+    public JsonResult upload(@RequestParam(value = "upload_file", required = false) MultipartFile file,
                              HttpServletRequest request) {
 
-        JsonResult response = userCheck.checkAdminRoleLogin(httpServletRequest);
-        if(response.isSuccess()){
-            String path = request.getSession().getServletContext().getRealPath("upload");
-            String targetFileName = fileService.upload(file, path);
-            String url = PropertiesUtils.getProperty("ftp.server.http.prefix") + targetFileName;
+        String path = request.getSession().getServletContext().getRealPath("upload");
+        String targetFileName = fileService.upload(file, path);
+        String url = PropertiesUtils.getProperty("ftp.server.http.prefix") + targetFileName;
 
-            Map<String, String> fileMap = Maps.newHashMap();
-            fileMap.put("uri", targetFileName);
-            fileMap.put("url", url);
-            return JsonResult.success(fileMap);
-        } else {
-            return JsonResult.error("无权限操作");
-        }
+        Map<String, String> fileMap = Maps.newHashMap();
+        fileMap.put("uri", targetFileName);
+        fileMap.put("url", url);
+        return JsonResult.success(fileMap);
     }
 
     @RequestMapping("/richtext_img_upload.do")
-    public Map<String, Object> richtextImgUpload(HttpServletRequest httpServletRequest,
-                                                 @RequestParam(value = "upload_file", required = false) MultipartFile file,
+    public Map<String, Object> richtextImgUpload(@RequestParam(value = "upload_file", required = false) MultipartFile file,
                                                  HttpServletRequest request,
                                                  HttpServletResponse response) {
 
         Map<String, Object> resultMap = Maps.newHashMap();
-        String loginToken = CookieUtils.readLoginToken(httpServletRequest);
-        if (StringUtils.isEmpty(loginToken)) {
+
+        String path = request.getSession().getServletContext().getRealPath("upload");
+        String targetFileName = fileService.upload(file, path);
+        if (StringUtils.isBlank(targetFileName)) {
             resultMap.put("success", false);
-            resultMap.put("msg", "请登录管理员");
-            return resultMap;
-        }
-        String userJsonStr = RedisShardedPoolUtils.get(loginToken);
-        User user = JsonUtils.string2Obj(userJsonStr, User.class);
-        if (user == null) {
-            resultMap.put("success", false);
-            resultMap.put("msg", "请登录管理员");
+            resultMap.put("msg", "上传失败");
             return resultMap;
         }
 
-        if (userService.checkAdminRole(user).isSuccess()) {
-            String path = request.getSession().getServletContext().getRealPath("upload");
-            String targetFileName = fileService.upload(file, path);
-            if (StringUtils.isBlank(targetFileName)) {
-                resultMap.put("success", false);
-                resultMap.put("msg", "上传失败");
-                return resultMap;
-            }
-
-            String url = PropertiesUtils.getProperty("ftp.server.http.prefix") + targetFileName;
-            resultMap.put("success", true);
-            resultMap.put("msg", "上传成功");
-            resultMap.put("file_path", url);
-            response.addHeader("Access-Control-Allow-Headers", "X-File-Name");
-            return resultMap;
-        } else {
-            resultMap.put("success", false);
-            resultMap.put("msg", "无权限操作");
-            return resultMap;
-        }
+        String url = PropertiesUtils.getProperty("ftp.server.http.prefix") + targetFileName;
+        resultMap.put("success", true);
+        resultMap.put("msg", "上传成功");
+        resultMap.put("file_path", url);
+        response.addHeader("Access-Control-Allow-Headers", "X-File-Name");
+        return resultMap;
     }
 }

@@ -37,4 +37,13 @@
         <property name="maxInMemorySize" value="4096"/>
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
+
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/admin/**"/>
+            <!--放行管理员的登录请求-->
+            <!--<mvc:exclude-mapping path="/admin/user/login.do"/>-->
+            <bean class="com.mmall.controller.common.interceptor.AuthorityInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 </beans>

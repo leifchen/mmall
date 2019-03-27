@@ -30,6 +30,7 @@ import com.mmall.vo.ShippingVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -570,5 +571,28 @@ public class OrderServiceImpl implements OrderService {
             return JsonResult.success("该订单已支付");
         }
         return JsonResult.error("该订单尚未付款");
+    }
+
+    @Override
+    public void closeOrder(int hour) {
+        Date closeDateTime = DateUtils.addHours(new Date(), -hour);
+        List<Order> orderList = orderMapper.selectOrderStatusByCreateTime(Const.OrderStatusEnum.NO_PAY.getCode(), DateTimeUtils.dateToStr(closeDateTime));
+        for (Order order : orderList) {
+            List<OrderItem> orderItemList = orderItemMapper.getByOrderNo(order.getOrderNo());
+            for (OrderItem orderItem : orderItemList) {
+                // 使用主键查询条件，防止锁表
+                Integer stock = productMapper.selectStockByProductId(orderItem.getProductId());
+                // 考虑到已生成订单里的商品被删除的情况
+                if (stock == null) {
+                    continue;
+                }
+                Product product = new Product();
+                product.setId(orderItem.getProductId());
+                product.setStock(stock + orderItem.getQuantity());
+                productMapper.updateByPrimaryKeySelective(product);
+            }
+            orderMapper.closeOrderById(order.getId());
+            log.info("关闭订单OrderNo:{}", order.getOrderNo());
+        }
     }
 }

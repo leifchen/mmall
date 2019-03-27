@@ -116,4 +116,46 @@ public class RedisShardedPoolUtils {
         RedisShardedPool.returnResource(jedis);
         return result;
     }
+
+    /**
+     * 设置键值对，事前判断是否已存在
+     * @param key   键
+     * @param value 值
+     * @return
+     */
+    public static Long setnx(String key, String value) {
+        ShardedJedis jedis = null;
+        Long result;
+        try {
+            jedis = RedisShardedPool.getJedis();
+            result = jedis.setnx(key, value);
+        } catch (Exception e) {
+            log.error("setnx key:{} value:{} error", key, value, e);
+            RedisShardedPool.returnBrokenResource(jedis);
+            return null;
+        }
+        RedisShardedPool.returnResource(jedis);
+        return result;
+    }
+
+    /**
+     * 设置键值对，并立即返回旧值
+     * @param key   键
+     * @param value 值
+     * @return
+     */
+    public static String getSet(String key, String value) {
+        ShardedJedis jedis = null;
+        String result;
+        try {
+            jedis = RedisShardedPool.getJedis();
+            result = jedis.getSet(key, value);
+        } catch (Exception e) {
+            log.error("set key:{} value:{} error", key, value, e);
+            RedisShardedPool.returnBrokenResource(jedis);
+            return null;
+        }
+        RedisShardedPool.returnResource(jedis);
+        return result;
+    }
 }

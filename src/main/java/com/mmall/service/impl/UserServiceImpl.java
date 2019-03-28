@@ -3,11 +3,11 @@ package com.mmall.service.impl;
 import com.mmall.common.Const;
 import com.mmall.common.JsonResult;
 import com.mmall.common.ResponseCodeEnum;
-import com.mmall.common.TokenCache;
 import com.mmall.dao.UserMapper;
 import com.mmall.pojo.User;
 import com.mmall.service.UserService;
 import com.mmall.util.Md5Utils;
+import com.mmall.util.RedisShardedPoolUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
         int resultCount = userMapper.checkAnswer(username, question, answer);
         if (resultCount > 0) {
             String forgetToken = UUID.randomUUID().toString();
-            TokenCache.setKey(TokenCache.TOKEN_PREFIX + username, forgetToken);
+            RedisShardedPoolUtils.setEx(Const.TOKEN_PREFIX + username, forgetToken, 60 * 60 * 12);
             return JsonResult.success(forgetToken);
         }
         return JsonResult.error("问题的答案错误");
@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService {
             return JsonResult.error("用户不存在");
         }
 
-        String token = TokenCache.getKey(TokenCache.TOKEN_PREFIX + username);
+        String token = RedisShardedPoolUtils.get(Const.TOKEN_PREFIX + username);
         if (StringUtils.isBlank(token)) {
             return JsonResult.error("token无效或者过期");
         }

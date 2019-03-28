@@ -3,23 +3,19 @@ package com.mmall.controller.portal;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.demo.trade.config.Configs;
-import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
 import com.mmall.common.Const;
 import com.mmall.common.JsonResult;
-import com.mmall.common.ResponseCodeEnum;
+import com.mmall.controller.common.UserCheck;
 import com.mmall.pojo.User;
 import com.mmall.service.OrderService;
-import com.mmall.vo.OrderVO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 /**
@@ -28,74 +24,84 @@ import java.util.Map;
  * @Author LeifChen
  * @Date 2019-03-08
  */
+@Slf4j
 @RestController
 @RequestMapping("/order")
 public class OrderController {
 
-    private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
-
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private UserCheck userCheck;
 
     @RequestMapping(value = "/create.do")
-    public JsonResult<OrderVO> create(HttpSession session, Integer shippingId) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return JsonResult.error(ResponseCodeEnum.NEED_LOGIN.getCode(), ResponseCodeEnum.NEED_LOGIN.getDesc());
+    public JsonResult create(HttpServletRequest httpServletRequest, Integer shippingId) {
+        JsonResult response = userCheck.checkLogin(httpServletRequest);
+        if (response.isSuccess()) {
+            User user = (User) response.getData();
+            return orderService.create(user.getId(), shippingId);
+        } else {
+            return response;
         }
-        return orderService.create(user.getId(), shippingId);
     }
 
     @RequestMapping(value = "/cancel.do")
-    public JsonResult<String> cancel(HttpSession session, Long orderNo) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return JsonResult.error(ResponseCodeEnum.NEED_LOGIN.getCode(), ResponseCodeEnum.NEED_LOGIN.getDesc());
+    public JsonResult cancel(HttpServletRequest httpServletRequest, Long orderNo) {
+        JsonResult response = userCheck.checkLogin(httpServletRequest);
+        if (response.isSuccess()) {
+            User user = (User) response.getData();
+            return orderService.cancel(user.getId(), orderNo);
+        } else {
+            return response;
         }
-        return orderService.cancel(user.getId(), orderNo);
     }
 
     @RequestMapping(value = "/get_order_cart_product.do")
-    public JsonResult getOrderCartProduct(HttpSession session) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return JsonResult.error(ResponseCodeEnum.NEED_LOGIN.getCode(), ResponseCodeEnum.NEED_LOGIN.getDesc());
+    public JsonResult getOrderCartProduct(HttpServletRequest httpServletRequest) {
+        JsonResult response = userCheck.checkLogin(httpServletRequest);
+        if (response.isSuccess()) {
+            User user = (User) response.getData();
+            return orderService.getOrderCartProduct(user.getId());
+        } else {
+            return response;
         }
-        return orderService.getOrderCartProduct(user.getId());
     }
 
     @RequestMapping(value = "/detail.do")
-    public JsonResult detail(HttpSession session, Long orderNo) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return JsonResult.error(ResponseCodeEnum.NEED_LOGIN.getCode(), ResponseCodeEnum.NEED_LOGIN.getDesc());
+    public JsonResult detail(HttpServletRequest httpServletRequest, Long orderNo) {
+        JsonResult response = userCheck.checkLogin(httpServletRequest);
+        if (response.isSuccess()) {
+            User user = (User) response.getData();
+            return orderService.getOrderDetail(user.getId(), orderNo);
+        } else {
+            return response;
         }
-        return orderService.getOrderDetail(user.getId(), orderNo);
     }
 
     @RequestMapping(value = "/list.do")
-    public JsonResult<PageInfo> list(HttpSession session,
+    public JsonResult list(HttpServletRequest httpServletRequest,
                                      @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                      @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return JsonResult.error(ResponseCodeEnum.NEED_LOGIN.getCode(), ResponseCodeEnum.NEED_LOGIN.getDesc());
+        JsonResult response = userCheck.checkLogin(httpServletRequest);
+        if (response.isSuccess()) {
+            User user = (User) response.getData();
+            return orderService.getOrderList(user.getId(), pageNum, pageSize);
+        } else {
+            return response;
         }
-        return orderService.getOrderList(user.getId(), pageNum, pageSize);
     }
 
     @RequestMapping(value = "/pay.do")
-    public JsonResult pay(HttpSession session,
-                          Long orderNo,
-                          HttpServletRequest request) {
-
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return JsonResult.error(ResponseCodeEnum.NEED_LOGIN.getCode(), ResponseCodeEnum.NEED_LOGIN.getDesc());
+    public JsonResult pay(HttpServletRequest httpServletRequest, Long orderNo) {
+        JsonResult response = userCheck.checkLogin(httpServletRequest);
+        if (response.isSuccess()) {
+            User user = (User) response.getData();
+            String path = httpServletRequest.getSession().getServletContext().getRealPath("upload");
+            return orderService.pay(orderNo, user.getId(), path);
+        } else {
+            return response;
         }
-        String path = request.getSession().getServletContext().getRealPath("upload");
-        return orderService.pay(orderNo, user.getId(), path);
     }
 
     @RequestMapping(value = "/alipay_callback.do")
@@ -112,7 +118,7 @@ public class OrderController {
             }
             params.put(name, valueStr);
         }
-        logger.info("支付宝回调,sign:{},trade_status:{},参数:{}", params.get("sign"), params.get("trade_status"), params.toString());
+        log.info("支付宝回调,sign:{},trade_status:{},参数:{}", params.get("sign"), params.get("trade_status"), params.toString());
 
         // 验证回调
         params.remove("sign_type");
@@ -122,7 +128,7 @@ public class OrderController {
                 return JsonResult.error("非法请求，验证不通过");
             }
         } catch (AlipayApiException e) {
-            logger.error("支付宝验证回调异常", e);
+            log.error("支付宝验证回调异常", e);
         }
 
         JsonResult response = orderService.alipayCallback(params);
@@ -133,15 +139,17 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/query_order_pay_status.do")
-    public JsonResult queryOrderPayStatus(HttpSession session, Long orderNo) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return JsonResult.error(ResponseCodeEnum.NEED_LOGIN.getCode(), ResponseCodeEnum.NEED_LOGIN.getDesc());
-        }
-        JsonResult response = orderService.queryOrderPayStatus(user.getId(), orderNo);
+    public JsonResult queryOrderPayStatus(HttpServletRequest httpServletRequest, Long orderNo) {
+        JsonResult response = userCheck.checkLogin(httpServletRequest);
         if (response.isSuccess()) {
-            return JsonResult.success(true);
+            User user = (User) response.getData();
+            JsonResult result = orderService.queryOrderPayStatus(user.getId(), orderNo);
+            if (result.isSuccess()) {
+                return JsonResult.success(true);
+            }
+            return result;
+        } else {
+            return response;
         }
-        return response;
     }
 }

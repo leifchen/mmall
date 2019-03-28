@@ -62,17 +62,24 @@ public interface ProductMapper {
 
     /**
      * 根据id和名称查询商品列表
-     * @param productName
-     * @param productId
+     * @param productName 商品名称
+     * @param productId 商品id
      * @return
      */
     List<Product> selectByNameAndProductId(@Param("productName") String productName, @Param("productId") Integer productId);
 
     /**
      * 根据类别id和名称查询商品列表
-     * @param productName
-     * @param categoryIdList
+     * @param productName 商品名称
+     * @param categoryIdList 类别id列表
      * @return
      */
     List<Product> selectByNameAndCategoryIds(@Param("productName") String productName, @Param("categoryIdList") List<Integer> categoryIdList);
+
+    /**
+     * 根据id查询库存
+     * @param id 商品id
+     * @return
+     */
+    Integer selectStockByProductId(Integer id);
 }

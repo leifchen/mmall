@@ -108,4 +108,10 @@ public interface OrderService {
      * @return
      */
     JsonResult queryOrderPayStatus(Integer userId, Long orderNo);
+
+    /**
+     * 关闭订单
+     * @param hour 超时时间
+     */
+    void closeOrder(int hour);
 }
